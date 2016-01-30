@@ -16,12 +16,39 @@ state("popcapgame1")
 
 start
 {
-	return current.storyScreenObj != 0 && current.screenNum == 0;
+	if (current.storyScreenObj != 0 && current.screenNum == 0) {
+		vars.currentSet = 1;
+		vars.currentLevel = 1;
+		return true;
+	}
+	return false;
 }
 
 split
 {
-	return (current.boardObj != 0 && current.interfaceObj != 0 && current.levelNum >= 1 && current.levelNum <= 5 && current.levelNum > old.levelNum && current.levelNum != 1) || (current.storyScreenObj != 0 && current.screenNum > old.screenNum);
+	if (current.boardObj != 0 && current.interfaceObj != 0) {
+		// we're in a level
+		if (vars.currentLevel != current.levelNum && vars.currentLevel != 5) {
+			// we were on levels 1-4
+			if (current.levelNum == 1) {
+				vars.currentLevel = 1;
+				return false;   // no split on the first level since we split on the story screen instead
+			}
+			else if (current.levelNum >= 2 && current.levelNum <= 5) {
+				vars.currentLevel = current.levelNum;
+				return true;
+			}
+		}
+	}
+	else if (current.storyScreenObj != 0) {
+		// we're on a story screen
+		if (vars.currentSet != (current.screenNum + 1)) {
+			vars.currentSet = current.screenNum + 1;
+			vars.currentLevel = 1;
+			return true;
+		}
+	}
+	return false;
 }
 
 reset
