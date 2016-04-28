@@ -1,8 +1,8 @@
-state("popcapgame1")
+state("popcapgame1", "Steam v1.0")
 {
   // The pointer paths start on the stack (to be precise, at 0x18F574), which is before the program base, hence the unusual base addresses.
-  // Unfortunately I can't do "-0x2702B8" because LiveSplit complains, so I have to wrap around instead :(
 
+  // Unfortunately I can't do "-0x2702B8" because LiveSplit complains, so I have to wrap around instead :(
   // (0x18F574 + 0x7D4) - 0x400000
   int storyScreenObj : "popcapgame1.exe", 0xFFD8FD48;
   int screenNum : "popcapgame1.exe", 0xFFD8FD48, 0x9C;
@@ -20,6 +20,28 @@ state("popcapgame1")
   int mainMenuObj : "popcapgame1.exe", 0xFFD8FD40
 }
 
+state("Peggle", "Origin v1.01")
+{
+  // The pointer paths start on the stack (to be precise, at 0x18EFE0), which is before the program base, hence the unusual base addresses.
+
+  // Unfortunately I can't do "-0x27084C" because LiveSplit complains, so I have to wrap around instead :(
+  // (0x18EFE0 + 0x7D4) - 0x400000
+  int storyScreenObj : "Peggle.exe", 0xFFD8F7B4;
+  int screenNum : "Peggle.exe", 0xFFD8F7B4, 0x9C;
+  // This next one is just to confirm that we've properly initialised the StoryScreen object so the timer doesn't start prematurely.
+  int storyParent : "Peggle.exe", 0xFFD8F7B4, 0x8C;
+
+  // likewise with the wraparound address for "-0x270868".
+  // (0x18EFE0 + 0x7B8) - 0x400000
+  int boardObj : "Peggle.exe", 0xFFD8F798;
+  int interfaceObj : "Peggle.exe", 0xFFD8F798, 0x14C;
+  int levelNum : "Peggle.exe", 0xFFD8F798, 0x14C, 0x90;
+
+  // and again for "-0x270854".
+  // (0x18EFE0 + 0x7CC) - 0x400000
+  int mainMenuObj : "Peggle.exe", 0xFFD8F7AC
+}
+
 init
 {
   vars.currentSet = 0;
@@ -28,7 +50,7 @@ init
 
 start
 {
-  if (current.storyScreenObj != 0 && current.screenNum == 0 && current.storyParent == 0x18F574 ) {
+  if (current.storyScreenObj != 0 && current.screenNum == 0 && (current.storyParent == 0x18F574 || current.storyParent == 0x18EFE0) ) {
     print("starting");
     vars.currentSet = 0;
     vars.currentLevel = 0;
